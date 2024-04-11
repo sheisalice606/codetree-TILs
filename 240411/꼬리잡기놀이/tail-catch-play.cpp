@@ -26,7 +26,6 @@ void Fast_IO() {
 	cout.tie(NULL);
 }
 
-
 void Input() {
 	Fast_IO();
 	cin >> N >> M >> K;
@@ -39,29 +38,17 @@ void Input() {
 
 void Spread(int x, int y, int curr_idx, int Label) {
 	int curr = Map[x][y];
-	//cout << "현재 칸 : " << x << ", " << y << "는 : " << Map[x][y] << " 입니다." << endl;
 
 	for (int i = 0; i < 4; i++) {
 		int nx = x + dx[i];
 		int ny = y + dy[i];
-		if (nx < 1 || ny < 1 || nx > N || ny > N || Map[nx][ny] == 0) {
-			//cout << nx << ", " << ny << " 는 레일 범위 밖입니다." << endl;
-			continue;
-		}
-		if (Visit[nx][ny] == 1) {
-			//cout << nx << ", " << ny << " 는 방문 노드입니다." << endl;
-			continue;
-		}
-		
-		//꼬리->머리->꼬리 방향의 그룹탐색
+		if (nx < 1 || ny < 1 || nx > N || ny > N || Map[nx][ny] == 0 || Visit[nx][ny] == 1) continue;
 
 		//꼬리(3) 다음은 반드시 중간(2)이다.
 		if (curr == 3 && Map[nx][ny] == 2) {
 			Visit[nx][ny] = 1;
 			Group[Label][curr_idx].nx = nx;
 			Group[Label][curr_idx].ny = ny;
-			//cout << curr_idx << ", " << Group[Label][curr_idx].nx << " , " << Group[Label][curr_idx].ny << endl;
-			//현재 기준 nx, ny를 확정
 			Group[Label].push_back({ nx, ny, 0, 0, Map[nx][ny] });
 			Spread(nx, ny, curr_idx + 1, Label);
 		}
@@ -70,8 +57,6 @@ void Spread(int x, int y, int curr_idx, int Label) {
 			Visit[nx][ny] = 1;
 			Group[Label][curr_idx].nx = nx;
 			Group[Label][curr_idx].ny = ny;
-			//cout << curr_idx << ", " << Group[Label][curr_idx].nx << " , " << Group[Label][curr_idx].ny << endl;
-			//현재 기준 nx, ny를 확정
 			Group[Label].push_back({ nx, ny, 0, 0, Map[nx][ny] });
 			Spread(nx, ny, curr_idx + 1, Label);
 		}
@@ -80,8 +65,6 @@ void Spread(int x, int y, int curr_idx, int Label) {
 			Visit[nx][ny] = 1;
 			Group[Label][curr_idx].nx = nx;
 			Group[Label][curr_idx].ny = ny;
-			//cout << curr_idx << ", " << Group[Label][curr_idx].nx << " , " << Group[Label][curr_idx].ny << endl;
-			//현재 기준 nx, ny를 확정
 			Group[Label].push_back({ nx, ny, 0, 0, Map[nx][ny] });
 			Spread(nx, ny, curr_idx + 1, Label);
 		}
@@ -90,8 +73,6 @@ void Spread(int x, int y, int curr_idx, int Label) {
 			Visit[nx][ny] = 1;
 			Group[Label][curr_idx].nx = nx;
 			Group[Label][curr_idx].ny = ny;
-			//cout << curr_idx << ", " << Group[Label][curr_idx].nx << " , " << Group[Label][curr_idx].ny << endl;
-			//현재 기준 nx, ny를 확정
 			Group[Label].push_back({ nx, ny, 0, 0, Map[nx][ny] });
 			Spread(nx, ny, curr_idx + 1, Label);
 		}
@@ -103,7 +84,7 @@ void Make_Group() {
 	for (int i = 1; i <= N; i++) {
 		for (int j = 1; j <= N; j++) {
 			if (Map[i][j] == 3) {
-				//cout << "꼬리칸 : " << i << ", " << j << "에서 그룹 생성 전파를 시작합니다." << endl;
+
 				Visit[i][j] = 1;
 				Group[Label].push_back({ i, j, 0, 0, 3 });
 
@@ -111,11 +92,9 @@ void Make_Group() {
 				Group[Label][Group[Label].size() - 1].nx = Group[Label][0].x;
 				Group[Label][Group[Label].size() - 1].ny = Group[Label][0].y;
 				//순환 구조 만들기
-				
-				//cout << Label << " 번 그룹의 크기 : " << Group[Label].size() << endl << endl;
+
 				for (int k = 0; k < Group[Label].size(); k++) {
 					Pos[Group[Label][k].x][Group[Label][k].y] = Label;
-					//cout << Group[Label][k].nx << ", " << Group[Label][k].ny << endl;
 				}
 
 				Label++;
@@ -123,9 +102,6 @@ void Make_Group() {
 		}
 	}
 	memset(Visit, 0, sizeof(Visit));
-	//Print_Map();
-	//cout << endl;
-	//Print_Pos();
 }
 
 //머리 방향으로 한 칸 움직인다.
@@ -137,13 +113,12 @@ void Move_One_Step() {
 		int Last_y = Group[i][0].y;
 		int Last_nx = Group[i][0].nx;
 		int Last_ny = Group[i][0].ny;
-		//첫 정보 저장
 
 		for (int j = 0; j < Group[i].size() - 1; j++) {
 			int nx = Group[i][j].nx;
 			int ny = Group[i][j].ny;
 			Temp[nx][ny] = Group[i][j].role;
-			//Temp에 다음 좌표 대입
+			//Temp 이동 정보 저장
 
 			Group[i][j].x = nx;
 			Group[i][j].y = ny;
@@ -151,29 +126,26 @@ void Move_One_Step() {
 			Group[i][j].ny = Group[i][j + 1].ny;
 		}
 
-		Temp[Last_x][Last_y] = Group[i][Group[i].size() - 1].role;
-		Group[i][Group[i].size() - 1].x = Last_x;
-		Group[i][Group[i].size() - 1].x = Last_y;
-		Group[i][Group[i].size() - 1].nx = Last_nx;
-		Group[i][Group[i].size() - 1].ny = Last_ny;
-		//마지막 좌표만 처음에 처리
-
+		int size = Group[i].size();
+		Temp[Group[i][size - 1].nx][Group[i][size - 1].ny] = Group[i][size - 1].role;
+		Group[i][size - 1].x = Last_x;
+		Group[i][size - 1].y = Last_y;
+		Group[i][size - 1].nx = Last_nx;
+		Group[i][size - 1].ny = Last_ny;
 	}
+
 
 	for (int i = 1; i <= N; i++) {
 		for (int j = 1; j <= N; j++) {
 			Map[i][j] = Temp[i][j];
 		}
 	}
-	//cout << "한 칸 움직임 이후" << endl;
-	//Print_Map();
+
 }
 
 void Reverse_Path(int x, int y, int n) {
 	//점수 얻기 로직 시작
-	//cout << x << ", " << y << " 에서 충돌이 발생했습니다." << endl;
 	if (Map[x][y] == 1) {
-		//cout << "머리 사람입니다. 1점 획득" << endl;
 		Point += 1;
 	}
 	else {
@@ -183,122 +155,75 @@ void Reverse_Path(int x, int y, int n) {
 			if (Group[n][i].role == 1) {
 				head = i;
 			}
-			else if(Group[n][i].x == x && Group[n][i].y == y) {
+			else if (Group[n][i].x == x && Group[n][i].y == y) {
 				target = i;
 			}
 		}
 		int p = abs(target - head) + 1;
-		//cout << p << "번째 사람입니다. " << p * p << " 점 획득" << endl;
 		Point += p * p;
 	}
 	//점수 얻기 로직 끝
 
-	int New_Tail_x = -1;
-	int New_Tail_y = -1;
+	int Tail_x = Group[n][0].x;
+	int Tail_y = Group[n][0].y;
 
 	for (int i = 0; i < Group[n].size(); i++) {
 		int px = Group[n][i].x;
 		int py = Group[n][i].y;
 		if (Map[px][py] == 1) {
-			New_Tail_x = px;
-			New_Tail_y = py;
 			Map[px][py] = 3;
+			Map[Tail_x][Tail_y] = 1;
+			Tail_x = px;
+			Tail_y = py;
+			break;
 		}
-		else if (Map[px][py] == 3) Map[px][py] = 1;
-		//머리, 꼬리 위치 Map 상에서 바꾸기
 	}
 	Group[n].clear();
 	//n번그룹 정보 완전 초기화
 
-	//cout << "꼬리칸 : " << New_Tail_x << ", " << New_Tail_y << "에서 역방향 그룹 생성 전파를 시작합니다." << endl;
-	Visit[New_Tail_x][New_Tail_y] = 1;
-	Group[n].push_back({ New_Tail_x, New_Tail_y, 0, 0, 3 });
+	Visit[Tail_x][Tail_y] = 1;
+	Group[n].push_back({ Tail_x, Tail_y, 0, 0, 3 });
 
-	Spread(New_Tail_x, New_Tail_y, 0, n);
+	Spread(Tail_x, Tail_y, 0, n);
 	Group[n][Group[n].size() - 1].nx = Group[n][0].x;
 	Group[n][Group[n].size() - 1].ny = Group[n][0].y;
 	memset(Visit, 0, sizeof(Visit));
 	//방문배열 초기화
-	//Print_Map();
 }
 
 void Left_ball(int time) {
-	//cout << "왼쪽에서 공이 날아옵니다. : " << time << endl;
-	bool Flag = false;
-	
 	for (int i = 1; i <= N; i++) {
 		if (Map[time][i] >= 1 && Map[time][i] <= 3) {
-			Flag = true;
 			Reverse_Path(time, i, Pos[time][i]);
 			break;
 		}
-	}
-
-	if (Flag == true) {
-		//cout << "방향이 전환됩니다." << endl;
-	}
-	else {
-		//cout << "아무도 맞지 않았습니다." << endl;
 	}
 }
 
 void Upper_ball(int time) {
-	//cout << "아래에서 공이 날아옵니다. : " << time << endl;
-	bool Flag = false;
-
 	for (int i = N; i >= 1; i--) {
 		if (Map[i][time] >= 1 && Map[i][time] <= 3) {
-			Flag = true;
 			Reverse_Path(i, time, Pos[i][time]);
 			break;
 		}
-	}
-
-	if (Flag == true) {
-		//cout << "방향이 전환됩니다." << endl;
-	}
-	else {
-		//cout << "아무도 맞지 않았습니다." << endl;
 	}
 }
 
 void Right_ball(int time) {
-	//cout << "오른쪽에서 공이 날아옵니다. : " << time << endl;
-	bool Flag = false;
-
 	for (int i = N; i >= 1; i--) {
 		if (Map[time][i] >= 1 && Map[time][i] <= 3) {
-			Flag = true;
 			Reverse_Path(time, i, Pos[time][i]);
 			break;
 		}
 	}
-
-	if (Flag == true) {
-		//cout << "방향이 전환됩니다." << endl;
-	}
-	else {
-		//cout << "아무도 맞지 않았습니다." << endl;
-	}
 }
 
 void High_ball(int time) {
-	//cout << "위에서 공이 날아옵니다. : " << time << endl;
-	bool Flag = false;
-
 	for (int i = 1; i <= N; i++) {
 		if (Map[i][time] >= 1 && Map[i][time] <= 3) {
-			Flag = true;
 			Reverse_Path(i, time, Pos[i][time]);
 			break;
 		}
-	}
-
-	if (Flag == true) {
-		//cout << "방향이 전환됩니다." << endl;
-	}
-	else {
-		//cout << "아무도 맞지 않았습니다." << endl;
 	}
 }
 
@@ -307,7 +232,7 @@ int main() {
 	Make_Group();
 	int round = 0;
 	for (int t = 1; t <= K; t++) {
-		
+
 		//1. 그룹이 움직입니다.
 		Move_One_Step();
 
@@ -324,10 +249,10 @@ int main() {
 			Upper_ball(round - N);
 		}
 		else if (round <= 3 * N) {
-			Right_ball(round - 2 * N);
+			Right_ball(N - (round - 2 * N) + 1);
 		}
 		else if (round <= 4 * N) {
-			High_ball(round - 3 * N);
+			High_ball(N - (round - 3 * N) + 1);
 		}
 	}
 	cout << Point;
