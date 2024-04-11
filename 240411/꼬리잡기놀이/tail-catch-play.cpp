@@ -26,24 +26,6 @@ void Fast_IO() {
 	cout.tie(NULL);
 }
 
-// void Print_Map() {
-// 	cout << "MAP : " << endl;
-// 	for (int i = 1; i <= N; i++) {
-// 		for (int j = 1; j <= N; j++) {
-// 			cout << Map[i][j] << '\t';
-// 		} cout << endl;
-// 	} cout << endl;
-// }
-
-// void Print_Pos() {
-// 	cout << "Pos : " << endl;
-// 	for (int i = 1; i <= N; i++) {
-// 		for (int j = 1; j <= N; j++) {
-// 			cout << Pos[i][j] << '\t';
-// 		} cout << endl;
-// 	} cout << endl;
-// }
-
 
 void Input() {
 	Fast_IO();
@@ -189,25 +171,25 @@ void Move_One_Step() {
 
 void Reverse_Path(int x, int y, int n) {
 	//점수 얻기 로직 시작
-	int len = 1;
-
 	//cout << x << ", " << y << " 에서 충돌이 발생했습니다." << endl;
 	if (Map[x][y] == 1) {
 		//cout << "머리 사람입니다. 1점 획득" << endl;
 		Point += 1;
-		len = 0;
 	}
 	else {
+		int head = -1;
+		int target = -1;
 		for (int i = 0; i < Group[n].size(); i++) {
 			if (Group[n][i].role == 1) {
-				break;
+				head = i;
 			}
-			else {
-				len++;
+			else if(Group[n][i].x == x && Group[n][i].y == y) {
+				target = i;
 			}
 		}
-		//cout << len << "번째 사람입니다. " << len * len << " 점 획득" << endl;
-		Point += len * len;
+		int p = abs(target - head) + 1;
+		//cout << p << "번째 사람입니다. " << p * p << " 점 획득" << endl;
+		Point += p * p;
 	}
 	//점수 얻기 로직 끝
 
