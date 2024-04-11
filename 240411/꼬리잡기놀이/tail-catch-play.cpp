@@ -45,37 +45,12 @@ void Spread(int x, int y, int curr_idx, int Label) {
 		if (nx < 1 || ny < 1 || nx > N || ny > N || Map[nx][ny] == 0 || Visit[nx][ny] == 1) continue;
 
 		//꼬리(3) 다음은 반드시 중간(2)이다.
-		if (curr == 3 && Map[nx][ny] == 2) {
-			Visit[nx][ny] = 1;
-			Group[Label][curr_idx].nx = nx;
-			Group[Label][curr_idx].ny = ny;
-			Group[Label].push_back({ nx, ny, 0, 0, Map[nx][ny] });
-			Spread(nx, ny, curr_idx + 1, Label);
-		}
-		//중간(2) 다음은 반드시 중간(2) or 머리(1)이다.
-		else if (curr == 2 && (Map[nx][ny] == 2 || Map[nx][ny] == 1)) {
-			Visit[nx][ny] = 1;
-			Group[Label][curr_idx].nx = nx;
-			Group[Label][curr_idx].ny = ny;
-			Group[Label].push_back({ nx, ny, 0, 0, Map[nx][ny] });
-			Spread(nx, ny, curr_idx + 1, Label);
-		}
-		//머리(1) 다음은 반드시 레일(4) or 꼬리(3)이다.
-		else if (curr == 1 && (Map[nx][ny] == 3 || Map[nx][ny] == 4)) {
-			Visit[nx][ny] = 1;
-			Group[Label][curr_idx].nx = nx;
-			Group[Label][curr_idx].ny = ny;
-			Group[Label].push_back({ nx, ny, 0, 0, Map[nx][ny] });
-			Spread(nx, ny, curr_idx + 1, Label);
-		}
-		//레일(4) 다음은 반드시 레일(4) or 꼬리(3)이다.
-		else if (curr == 4 && (Map[nx][ny] == 4 || Map[nx][ny] == 3)) {
-			Visit[nx][ny] = 1;
-			Group[Label][curr_idx].nx = nx;
-			Group[Label][curr_idx].ny = ny;
-			Group[Label].push_back({ nx, ny, 0, 0, Map[nx][ny] });
-			Spread(nx, ny, curr_idx + 1, Label);
-		}
+		if (curr == 3 && Map[nx][ny] != 2) continue;
+        Visit[nx][ny] = 1;
+		Group[Label][curr_idx].nx = nx;
+		Group[Label][curr_idx].ny = ny;
+		Group[Label].push_back({ nx, ny, 0, 0, Map[nx][ny] });
+		Spread(nx, ny, curr_idx + 1, Label);
 	}
 }
 
