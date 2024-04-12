@@ -203,7 +203,7 @@ int main() {
 	for (int t = 1; t <= M; t++) {
 
 		Move_Ludol();
-		if (Game_End() == true) break;
+		//if (Game_End() == true) break;
 		Move_Santa();
 		if (Game_End() == true) break;
 
